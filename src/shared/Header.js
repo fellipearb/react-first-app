@@ -1,13 +1,14 @@
-import React, { Component } from 'react'
 
-export class Header extends Component {
-    render() {
-        return (
-            <header style={style}>
-                <h1>Hello TodoList</h1>
-            </header>
-        )
-    }
+import React from 'react'
+import { Link } from 'react-router-dom';
+
+function Header() {
+    return (
+        <header style={style}>
+            <h1>Hello TodoList</h1>
+            <Link to="/">Home</Link> | <Link to="/about">About</Link>
+        </header>
+    )
 }
 
 const style = {

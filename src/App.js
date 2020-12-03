@@ -1,29 +1,21 @@
 import './App.css';
 
-import { Component } from 'react';
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Todos from './components/Todos';
 import Header from './shared/Header';
 import AddTodoForm from './components/AddTodoForm';
+import About from './pages/About';
+import axios from 'axios';
 
 class App extends Component {
   state = {
-    todos: [
-      {
-        id: 1,
-        title: 'Get over here  - 1',
-        completed: false
-      },
-      {
-        id: 2,
-        title: 'Get over here - 2',
-        completed: false
-      },
-      {
-        id: 3,
-        title: 'Get over here - 3',
-        completed: false
-      }
-    ]
+    todos: []
+  }
+
+  componentDidMount() {
+    axios.get('https://jsonplaceholder.typicode.com/todos/?limit=10')
+      .then(res => this.setState({ todos: res.data }))
   }
 
   setCompleted = (id) => {
@@ -39,13 +31,13 @@ class App extends Component {
   }
 
   addTodo = (title) => {
-    const todoItem = {
-      id: this.state.todos.length + 1,
-      title: title,
+    const requestData = {
+      title,
       completed: false
-    };
+    }
 
-    this.setState({todos: [...this.state.todos, todoItem]})
+    axios.post('https://jsonplaceholder.typicode.com/todos', requestData)
+      .then(res => this.setState({ todos: [...this.state.todos, res.data] }))
   }
 
   delTodo = (id) => {
@@ -56,11 +48,21 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <Header />
-        <AddTodoForm addTodo={this.addTodo} />
-        <Todos todos={this.state.todos} setCompleted={this.setCompleted} delTodo={this.delTodo} />
-      </div>
+      <Router>
+        <div className="App">
+          <div className="container">
+            <Header />
+            <Route exact path="/" render={props => (
+              <React.Fragment>
+                <AddTodoForm addTodo={this.addTodo} />
+                <Todos todos={this.state.todos} setCompleted={this.setCompleted} delTodo={this.delTodo} />
+              </React.Fragment>
+            )} />
+
+            <Route path="/about" component={About} />
+          </div>
+        </div>
+      </Router>
     );
   }
 }
